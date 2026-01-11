@@ -198,6 +198,22 @@
             transition: opacity 0.5s;
         }
 
+        .reaction-image {
+            width: 200px;
+            height: auto;
+            border-radius: 15px;
+            margin: 20px 0;
+            opacity: 0;
+            transform: scale(0.8);
+            transition: opacity 0.5s, transform 0.5s;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .reaction-image.show {
+            opacity: 1;
+            transform: scale(1);
+        }
+
         .labels {
             display: flex;
             justify-content: space-between;
@@ -246,6 +262,8 @@
             <div class="score-display" id="scoreDisplay">
                 0<span>%</span>
             </div>
+
+            <img src="" alt="Reaction" class="reaction-image" id="reactionImage">
 
             <p class="funny-message" id="funnyMessage"></p>
 
@@ -356,6 +374,13 @@
             return categoryMessages[Math.floor(Math.random() * categoryMessages.length)];
         }
 
+        function getReactionImage(score) {
+            // Map score 0-100 to images 1-11
+            // Lower scores get lower numbered images, higher scores get higher numbered images
+            const imageNum = Math.min(11, Math.floor(score / 9) + 1);
+            return `Reaction Pictures/${imageNum}.png`;
+        }
+
         function checkReach() {
             const usernameInput = document.getElementById('username');
             const username = usernameInput.value.trim().replace('@', '');
@@ -382,12 +407,14 @@
             const barFill = document.getElementById('barometerFill');
             const scoreDisplay = document.getElementById('scoreDisplay');
             const funnyMessage = document.getElementById('funnyMessage');
+            const reactionImage = document.getElementById('reactionImage');
 
             // Reset
             barFill.style.width = '0%';
             barFill.className = 'barometer-fill';
             scoreDisplay.style.opacity = '0';
             funnyMessage.style.opacity = '0';
+            reactionImage.classList.remove('show');
 
             // Animate after a brief delay
             setTimeout(() => {
@@ -402,11 +429,17 @@
                 scoreDisplay.style.color = score <= 25 ? '#ff6b6b' : score <= 60 ? '#feca57' : '#1dd1a1';
             }, 2200);
 
-            // Show message after score
+            // Show reaction image after score
+            setTimeout(() => {
+                reactionImage.src = getReactionImage(score);
+                reactionImage.classList.add('show');
+            }, 2400);
+
+            // Show message after image
             setTimeout(() => {
                 funnyMessage.textContent = '"' + getMessage(score) + '"';
                 funnyMessage.style.opacity = '1';
-            }, 2700);
+            }, 2900);
         }
 
         function tryAgain() {
