@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reach Rationing Program</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #16213e 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #fff;
+        }
+
+        .container {
+            text-align: center;
+            padding: 40px;
+            max-width: 500px;
+            width: 90%;
+        }
+
+        .logo {
+            width: 180px;
+            height: auto;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            font-size: 2rem;
+            margin-bottom: 10px;
+            background: linear-gradient(90deg, #ff6b6b, #feca57);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle {
+            color: #666;
+            margin-bottom: 40px;
+            font-size: 0.9rem;
+        }
+
+        .input-section {
+            margin-bottom: 30px;
+        }
+
+        .input-wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .at-symbol {
+            font-size: 1.5rem;
+            color: #ff6b6b;
+            font-weight: bold;
+        }
+
+        input[type="text"] {
+            padding: 15px 20px;
+            font-size: 1.1rem;
+            border: 2px solid #333;
+            border-radius: 10px;
+            background: #1a1a2e;
+            color: #fff;
+            width: 250px;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #ff6b6b;
+            box-shadow: 0 0 20px rgba(255, 107, 107, 0.3);
+        }
+
+        button {
+            padding: 15px 40px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.3s;
+        }
+
+        .check-btn {
+            background: linear-gradient(90deg, #ff6b6b, #ee5a24);
+            color: #fff;
+        }
+
+        .check-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 30px rgba(255, 107, 107, 0.5);
+        }
+
+        .try-again-btn {
+            background: linear-gradient(90deg, #6c5ce7, #a29bfe);
+            color: #fff;
+            margin-top: 30px;
+        }
+
+        .try-again-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 30px rgba(108, 92, 231, 0.5);
+        }
+
+        .result-section {
+            display: none;
+        }
+
+        .username-display {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #ff6b6b;
+            margin-bottom: 10px;
+        }
+
+        .reach-title {
+            font-size: 1.2rem;
+            color: #888;
+            margin-bottom: 30px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .barometer-container {
+            background: #1a1a2e;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 20px;
+            border: 1px solid #333;
+        }
+
+        .barometer-track {
+            width: 100%;
+            height: 40px;
+            background: #0a0a0a;
+            border-radius: 20px;
+            overflow: hidden;
+            position: relative;
+            box-shadow: inset 0 4px 10px rgba(0, 0, 0, 0.5);
+        }
+
+        .barometer-fill {
+            height: 100%;
+            width: 0%;
+            border-radius: 20px;
+            transition: width 2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            position: relative;
+        }
+
+        .barometer-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(
+                180deg,
+                rgba(255, 255, 255, 0.3) 0%,
+                transparent 50%,
+                rgba(0, 0, 0, 0.2) 100%
+            );
+            border-radius: 20px;
+        }
+
+        .score-display {
+            font-size: 4rem;
+            font-weight: bold;
+            margin: 20px 0;
+            opacity: 0;
+            transition: opacity 0.5s;
+        }
+
+        .score-display span {
+            font-size: 2rem;
+            color: #666;
+        }
+
+        .funny-message {
+            font-size: 1.1rem;
+            color: #aaa;
+            font-style: italic;
+            min-height: 50px;
+            opacity: 0;
+            transition: opacity 0.5s;
+        }
+
+        .labels {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+            color: #666;
+            font-size: 0.8rem;
+        }
+
+        /* Color classes for the barometer */
+        .level-critical { background: linear-gradient(90deg, #ff0000, #cc0000); }
+        .level-danger { background: linear-gradient(90deg, #ff4444, #ff6b6b); }
+        .level-low { background: linear-gradient(90deg, #ff6b6b, #feca57); }
+        .level-medium { background: linear-gradient(90deg, #feca57, #48dbfb); }
+        .level-good { background: linear-gradient(90deg, #48dbfb, #1dd1a1); }
+        .level-great { background: linear-gradient(90deg, #1dd1a1, #00d2d3); }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <img src="Reach Allowance.png" alt="Reach Rationing Program" class="logo">
+        <h1>Reach Rationing Program</h1>
+        <p class="subtitle">Find out how much reach you have left on X</p>
+
+        <div class="input-section" id="inputSection">
+            <div class="input-wrapper">
+                <span class="at-symbol">@</span>
+                <input type="text" id="username" placeholder="Enter your X username" autocomplete="off">
+            </div>
+            <button class="check-btn" onclick="checkReach()">Check My Reach</button>
+        </div>
+
+        <div class="result-section" id="resultSection">
+            <p class="username-display" id="usernameDisplay"></p>
+            <p class="reach-title">How Much Reach You Have Left</p>
+
+            <div class="barometer-container">
+                <div class="barometer-track">
+                    <div class="barometer-fill" id="barometerFill"></div>
+                </div>
+                <div class="labels">
+                    <span>Shadowbanned</span>
+                    <span>Going Viral</span>
+                </div>
+            </div>
+
+            <div class="score-display" id="scoreDisplay">
+                0<span>%</span>
+            </div>
+
+            <p class="funny-message" id="funnyMessage"></p>
+
+            <button class="try-again-btn" onclick="tryAgain()">Try Again</button>
+        </div>
+    </div>
+
+    <script>
+        // Funny messages based on score ranges
+        const messages = {
+            critical: [ // 0-10
+                "Elon personally hit the 'nope' button on your account.",
+                "Your tweets are being shown exclusively to bots from 2009.",
+                "Even your alt account unfollowed you.",
+                "The algorithm pretends you don't exist. Honestly? Same.",
+                "Your reach is so low, it's paying rent in the Mariana Trench.",
+                "Congrats! You've achieved digital invisibility.",
+                "Your tweets go directly to the shadow realm.",
+                "The 'For You' page has a restraining order against you."
+            ],
+            danger: [ // 11-25
+                "You're tweeting into the void, and the void left you on read.",
+                "Your impressions are giving 'deserted island' vibes.",
+                "The algorithm knows you exist, but doesn't care.",
+                "Your reach called in sick. Permanently.",
+                "Somewhere, a single bot is loyally viewing your tweets.",
+                "You're not shadowbanned, just shadow-ignored.",
+                "Your content is being served to people who never scroll."
+            ],
+            low: [ // 26-40
+                "You're getting engagement, just not from humans.",
+                "The algorithm acknowledges you... reluctantly.",
+                "Your tweets are being shown during bathroom breaks.",
+                "You have the reach of a T-Rex. The arms, specifically.",
+                "Elon's dog has more impressions than you.",
+                "You're on the 'maybe' pile. It's a big pile."
+            ],
+            medium: [ // 41-60
+                "Perfectly mid. The algorithm respects the hustle.",
+                "You're visible enough to get ratio'd occasionally.",
+                "Your reach is like gas station coffee: it exists.",
+                "The algorithm is 'meh' about you. Could be worse!",
+                "You've achieved the digital equivalent of 'fine'.",
+                "Some real humans occasionally see your posts!"
+            ],
+            good: [ // 61-80
+                "Look at you go! The algorithm notices your fits.",
+                "Your tweets are actually reaching timelines. Plural!",
+                "You're out of the shadow realm and into the sunlight.",
+                "The 'For You' page has you on the guest list.",
+                "Your reach is giving 'main character energy'.",
+                "Engagement farmers are jealous of you."
+            ],
+            great: [ // 81-100
+                "You're basically a verified account without the checkmark.",
+                "Elon personally boosted your reach. Allegedly.",
+                "Your tweets are going straight to everyone's FYP.",
+                "The algorithm wants to be your friend.",
+                "Is this your burner, Mr. Beast?",
+                "Your reach is illegal in 12 countries.",
+                "Touch grass? No, grass should touch YOU."
+            ]
+        };
+
+        function getWeightedRandomScore() {
+            // Generate a score weighted toward lower numbers
+            const random = Math.random();
+
+            // Using exponential distribution to favor lower numbers
+            // About 60% chance of getting 0-30
+            // About 25% chance of getting 31-60
+            // About 15% chance of getting 61-100
+
+            if (random < 0.35) {
+                return Math.floor(Math.random() * 15); // 0-14 (35% chance)
+            } else if (random < 0.55) {
+                return Math.floor(Math.random() * 15) + 15; // 15-29 (20% chance)
+            } else if (random < 0.70) {
+                return Math.floor(Math.random() * 15) + 30; // 30-44 (15% chance)
+            } else if (random < 0.82) {
+                return Math.floor(Math.random() * 15) + 45; // 45-59 (12% chance)
+            } else if (random < 0.92) {
+                return Math.floor(Math.random() * 15) + 60; // 60-74 (10% chance)
+            } else {
+                return Math.floor(Math.random() * 26) + 75; // 75-100 (8% chance)
+            }
+        }
+
+        function getColorClass(score) {
+            if (score <= 10) return 'level-critical';
+            if (score <= 25) return 'level-danger';
+            if (score <= 40) return 'level-low';
+            if (score <= 60) return 'level-medium';
+            if (score <= 80) return 'level-good';
+            return 'level-great';
+        }
+
+        function getMessage(score) {
+            let category;
+            if (score <= 10) category = 'critical';
+            else if (score <= 25) category = 'danger';
+            else if (score <= 40) category = 'low';
+            else if (score <= 60) category = 'medium';
+            else if (score <= 80) category = 'good';
+            else category = 'great';
+
+            const categoryMessages = messages[category];
+            return categoryMessages[Math.floor(Math.random() * categoryMessages.length)];
+        }
+
+        function checkReach() {
+            const usernameInput = document.getElementById('username');
+            const username = usernameInput.value.trim().replace('@', '');
+
+            if (!username) {
+                usernameInput.style.borderColor = '#ff0000';
+                usernameInput.style.animation = 'shake 0.5s';
+                setTimeout(() => {
+                    usernameInput.style.borderColor = '#333';
+                    usernameInput.style.animation = '';
+                }, 500);
+                return;
+            }
+
+            // Hide input, show result
+            document.getElementById('inputSection').style.display = 'none';
+            document.getElementById('resultSection').style.display = 'block';
+
+            // Set username
+            document.getElementById('usernameDisplay').textContent = '@' + username;
+
+            // Generate score
+            const score = getWeightedRandomScore();
+            const barFill = document.getElementById('barometerFill');
+            const scoreDisplay = document.getElementById('scoreDisplay');
+            const funnyMessage = document.getElementById('funnyMessage');
+
+            // Reset
+            barFill.style.width = '0%';
+            barFill.className = 'barometer-fill';
+            scoreDisplay.style.opacity = '0';
+            funnyMessage.style.opacity = '0';
+
+            // Animate after a brief delay
+            setTimeout(() => {
+                barFill.classList.add(getColorClass(score));
+                barFill.style.width = score + '%';
+            }, 100);
+
+            // Show score after bar animation
+            setTimeout(() => {
+                scoreDisplay.innerHTML = score + '<span>%</span>';
+                scoreDisplay.style.opacity = '1';
+                scoreDisplay.style.color = score <= 25 ? '#ff6b6b' : score <= 60 ? '#feca57' : '#1dd1a1';
+            }, 2200);
+
+            // Show message after score
+            setTimeout(() => {
+                funnyMessage.textContent = '"' + getMessage(score) + '"';
+                funnyMessage.style.opacity = '1';
+            }, 2700);
+        }
+
+        function tryAgain() {
+            document.getElementById('inputSection').style.display = 'block';
+            document.getElementById('resultSection').style.display = 'none';
+            document.getElementById('username').value = '';
+            document.getElementById('username').focus();
+        }
+
+        // Allow Enter key to submit
+        document.getElementById('username').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                checkReach();
+            }
+        });
+    </script>
+</body>
+</html>
